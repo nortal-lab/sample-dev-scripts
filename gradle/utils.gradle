@@ -30,6 +30,14 @@ ext.setPropertyIfUndefined = { targetProject, property, defaultValue ->
   targetProject.hasProperty(property) ?: project.ext.set(property, defaultValue)
 }
 
+// Inhrerit buildscript repositories and classpath from root project
+ext.inheritBuildscriptConfigFromRoot = { buildscr ->
+  buildscr.repositories(projectRepositories)
+  rootProject.buildscript.getConfigurations().getByName('classpath').dependencies.each { dep ->
+    buildscr.dependencies.add('classpath', dep)
+  }
+}
+
 ext.getModuleWithPrefix = { moduleName ->
   return ":${rootProject.name}-${moduleName}"
 }

@@ -1,0 +1,31 @@
+buildscript {
+  inheritBuildscriptConfigFromRoot(buildscript)
+}
+
+//Apply only for java projects
+if (project.file('src/main/java').exists() || project.file('src/main/kotlin').exists()) {
+
+  logger.debug("Applying code-analysis.gradle for ${project.name}")
+
+  apply plugin: 'checkstyle'
+  apply plugin: 'com.github.spotbugs'
+
+  checkstyle {
+    toolVersion '8.29'
+    configFile = rootProject.file("${dev_scripts_submodule_dir}/checkstyle.xml")
+  }
+
+  spotbugs {
+    excludeFilter = rootProject.file("${dev_scripts_submodule_dir}/spotbugs-exclude.xml")
+  }
+
+  tasks.withType(Checkstyle) {
+    reports {
+      xml.enabled false
+      html.enabled true
+    }
+  }
+
+}
+
+

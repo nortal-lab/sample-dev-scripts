@@ -1,0 +1,7 @@
+ext {
+  // Must be defined before any inclusions from dev-scripts.
+  project_name="sample"
+  dev_scripts_submodule_dir="dev-scripts"
+}
+
+apply from: rootProject.file('dev-scripts/gradle/repositories.gradle')

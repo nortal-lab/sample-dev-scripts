@@ -1,0 +1,84 @@
+<!-- This file specifies a spotbugs filter for excluding reports that
+     should not be considered errors.
+
+     The format of this file is documented at:
+
+       https://spotbugs.readthedocs.io/en/latest/filter.html
+
+     When possible, please specify the full names of the bug codes,
+     using the pattern attribute, to make it clearer what reports are
+     being suppressed.  You can find a listing of codes at:
+
+       https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html
+  -->
+
+<FindBugsFilter>
+
+  <!-- Ignore spotbugs reports from incomplete detectors -->
+  <Match>
+    <Bug pattern="TESTING"/>
+  </Match>
+
+  <!-- We don't mind having redundant checks for null, it is more error prone to later changes -->
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+  </Match>
+
+  <!-- Ignore negating result of compareTo -->
+  <Match>
+    <Bug pattern="RV_NEGATING_RESULT_OF_COMPARETO"/>
+  </Match>
+
+  <!-- Ignore class naming convention issues -->
+  <Match>
+    <Bug pattern="NM_CLASS_NAMING_CONVENTION"/>
+  </Match>
+
+  <!-- Ignore unread public and protected fields -->
+  <Match>
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+  </Match>
+
+  <!-- Ignore unread public and protected fields -->
+  <Match>
+    <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+  </Match>
+
+  <!-- Ignore unused public and protected fields -->
+  <Match>
+    <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+  </Match>
+
+  <!-- Ignore returning references to internal representations of objects -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+
+  <!-- Ignoring when internal representation stores reference to external representation -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+
+  <!-- Ignoring checks in generated code -->
+  <Match>
+    <Package name="~.*\.graphql" />
+    <Bug code="NP" />
+  </Match>
+
+  <!-- Ignoring checks in generated code -->
+  <Match>
+    <Source name="~.*MapperImpl\.java"/>
+    <Bug code="NP" />
+  </Match>
+
+  <!-- https://github.com/spotbugs/spotbugs/issues/756 -->
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
+
+  <!-- Creates too many false positives with jpa specifications -->
+  <Match>
+    <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+  </Match>  
+
+</FindBugsFilter>
