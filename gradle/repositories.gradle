@@ -1,0 +1,48 @@
+/*
+ * Common repositories configuration to be included to all gradle build files.
+ * This file should be applied in all projects, where repositories or ext property values are needed
+ *
+ */
+apply from: rootProject.file('dev-scripts/gradle/utils.gradle')
+
+ext {
+  artifactory_url = getFirstDefined("env.${project_name.toUpperCase()}_ARTIFACTORY_URL", "${project_name}_artifactory_url", "artifactory_url")
+  artifactory_resolve_repository = getFirstDefined("env.${project_name.toUpperCase()}_ARTIFACTORY_REPOSITORY", "${project_name}_artifactory_repository", "artifactory_repository")
+
+  artifactory_user = getFirstDefined("env.${project_name.toUpperCase()}_ARTIFACTORY_USER", "${project_name}_artifactory_user", "artifactory_user")
+  artifactory_password = getFirstDefined("env.${project_name.toUpperCase()}_ARTIFACTORY_PASSWORD", "${project_name}_artifactory_password", "artifactory_password")
+}
+
+logger.info("Configuring ${project.name} artifact resolution to use url: ${artifactory_url}/${artifactory_resolve_repository} with username ${artifactory_user}")
+
+if (!project.hasProperty('artifactory_user') || !project.hasProperty('artifactory_password')) {
+  throw new GradleException("\n" +
+    ">>> Artifactory properties and credentials not configured!\n" +
+    ">>> ${project.gradle.gradleUserHomeDir}/gradle.properties file must contain following variables 'artifactory_user', 'artifactory_password'\n" +
+    ">>> and optionally 'artifactory_deploy_repository' and 'artifactory_deploy_release_repository'.\n\n" +
+    ">>> Obtain encrypted password from ${artifactory_url}/webapp/#/profile")
+}
+
+ext.projectRepositories = {
+  mavenLocal()
+  maven {
+    url "${artifactory_url}/${artifactory_resolve_repository}"
+    credentials {
+      username "${artifactory_user}"
+      password "${artifactory_password}"
+    }
+  }
+
+  maven { url "https://plugins.gradle.org/m2/" }
+  maven { url "http://repo.spring.io/release" }
+}
+
+project.buildscript.repositories(projectRepositories)
+project.repositories(projectRepositories)
+
+configurations.all {
+  resolutionStrategy {
+    cacheDynamicVersionsFor 5 * 60, 'seconds' // cache dynamic versions for 5 minutes
+    cacheChangingModulesFor 0, 'seconds'    // don't cache changing modules at all (SNAPSHOTS)
+  }
+}

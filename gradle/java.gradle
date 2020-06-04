@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-group = 'com.nortal.sample'
+group = "com.nortal.${project_name}"
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"

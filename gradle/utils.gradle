@@ -1,0 +1,36 @@
+/**
+ * Returns value of first property that is defined
+ * Environment variables can be accessed using 'env.' prefix.
+ * For example env.JAVA_HOME resolves to JAVA_HOME environment variable value
+ */
+ext.getFirstDefined = { String... propertyNames ->
+
+  def environmentVariablePrefix = "env."
+
+  for (propertyName in propertyNames) {
+    if (propertyName.startsWith(environmentVariablePrefix)) {
+      def environmentVariableName = propertyName.substring(environmentVariablePrefix.length())
+      def environmentVariableValue = System.getenv(environmentVariableName)
+      if (environmentVariableValue != null && environmentVariableValue.trim() != "") {
+        // Return and break the loop, when value found
+        project.logger.debug("Resolved environment variable " + propertyName)
+        return environmentVariableValue
+      }
+    } else if (project.hasProperty(propertyName)) {
+      project.logger.debug("Resolved project property " + propertyName)
+      return getProperty(propertyName)
+    }
+
+  }
+
+  return ""
+}
+
+ext.setPropertyIfUndefined = { targetProject, property, defaultValue ->
+  targetProject.hasProperty(property) ?: project.ext.set(property, defaultValue)
+}
+
+ext.getModuleWithPrefix = { moduleName ->
+  return ":${rootProject.name}-${moduleName}"
+}
+
